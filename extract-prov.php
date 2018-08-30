@@ -8,6 +8,8 @@
  *      The modification dates will be outputted to an XML file to be processed with XSLT later
  *****/
 
+//commit for XHTML fragments stored in .txt files: a72d91ea70c7ea9e5c77b4cbaafeaecbd6e7afa5
+
 $path = '/usr/local/projects/nomisma-data/id';
 $files = scandir($path);
 
