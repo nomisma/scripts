@@ -32,7 +32,7 @@ foreach ($files as $file){
             $writer->writeAttribute('id', str_replace('.rdf', '', $file));
         
             chdir($path);
-            exec("git log --date=format:'%Y-%m-%dT%H:%M:%S%zZ' -- " . $file, $output);
+            exec("git log --date=format:'%Y-%m-%dT%H:%M:%S%zZ' -- " . str_replace("'", "\'", $file), $output);
             
             foreach($output as $k=>$line){
             	//find commit at the beginning of the line, calculate date and description based on the first line of a commit in the log

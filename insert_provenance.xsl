@@ -83,6 +83,9 @@
                                     <!-- added prov namespace into RDF files -->
                                     <!-- note: Islamic mints also added on 2015-07-28 -->
                                 </xsl:when>
+                                <xsl:when test="@desc = 'fixed date glitch' or @desc = 'added skos:Concept into dynasty ids' or @desc = 'added FoN islamic_numismatics' or @desc = 'fixed structure'">
+                                    <!-- note: minor fixes after creation of Islamic orgs and dynasties -->
+                                </xsl:when>
                                 <xsl:when test="contains(., '2016-04-13')">
                                     <!-- migrated CIDOC-CRM to canonical URI from Erlangen -->
                                 </xsl:when>
@@ -123,11 +126,24 @@
                     <xsl:otherwise>
                         <xsl:choose>
                             <xsl:when test="index-of($dates, $creation) &gt; 0">
-                                <xsl:apply-templates select="$history/date[index-of($dates, $creation) &gt; 0]" mode="spreadsheet">
-                                    <xsl:with-param name="mode">Create</xsl:with-param>
-                                </xsl:apply-templates>
+                                
+                                <!-- ignore certain date-type combinations for particular spreadsheets -->
+                                <xsl:choose>
+                                    <xsl:when test="$creation = '2015-07-31' and not($type = 'foaf:Person')">
+                                        <prov:test>test1</prov:test>
+                                    </xsl:when>
+                                    <xsl:when test="$creation = '2015-07-01' and not($type = 'foaf:Person')">
+                                        <prov:test>test2</prov:test>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:apply-templates select="$history/date[index-of($dates, $creation) &gt; 0]" mode="spreadsheet">
+                                            <xsl:with-param name="mode">Create</xsl:with-param>
+                                        </xsl:apply-templates>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
+                                <prov:test>test3</prov:test>
                                 
                                 <!-- extend the mode=modify template -->
                                 
@@ -230,6 +246,7 @@
                             <!-- insert modification events for any spreadsheet -->
                             <xsl:apply-templates select="$history/date[index-of($dates, substring-before(., 'T')) &gt; 0]" mode="spreadsheet">
                                 <xsl:with-param name="mode">Modify</xsl:with-param>
+                                <xsl:with-param name="creation" select="$creation"/>
                             </xsl:apply-templates>
 
                             <!-- call template on the final commit, but only evaluate whether it should exist within the template -->
@@ -262,15 +279,16 @@
 
     <xsl:template match="date" mode="spreadsheet">
         <xsl:param name="mode"/>
+        <xsl:param name="creation"/>
         
         <xsl:variable name="date" select="substring-before(., 'T')"/>
         
         <!-- ignore certain dates when the ID doesn't match a specific parameter -->
-        <xsl:choose>
-            <xsl:when test="$date = '2015-07-31' and not($type = 'foaf:Person')"/>
-            <xsl:when test="$date = '2015-07-01' and not($type = 'foaf:Person')"/>
+        <xsl:choose>           
+            <xsl:when test="($date = $creation) and $mode = 'Modify'">
+                <!-- ignore events that are already determined to be creation dates -->
+            </xsl:when>
             <xsl:otherwise>
-                
                     <!-- differentiate between new or modified activities -->
                     <xsl:choose>
                         <xsl:when test="$mode = 'Modify'">
