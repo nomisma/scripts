@@ -134,6 +134,11 @@
                                     <xsl:with-param name="mode">Create</xsl:with-param>
                                 </xsl:apply-templates>
                             </xsl:when>
+                            <xsl:when test="$creation = '2018-04-20' and $type = 'nmo:Collection'">
+                                <xsl:apply-templates select="$history/date[1]" mode="manual">
+                                    <xsl:with-param name="mode">Create</xsl:with-param>
+                                </xsl:apply-templates>
+                            </xsl:when>
                             <xsl:otherwise>
                                 <xsl:apply-templates select="$history/date[1]" mode="spreadsheet">
                                     <xsl:with-param name="mode">Create</xsl:with-param>
@@ -235,7 +240,7 @@
                                     <xsl:text>This is among the original Nomisma XHTML+RDFa fragments, most likely created between 2010-2012 by Sebastian Heath and/or Andy Meadows.</xsl:text>
                                 </dcterms:description>
                             </xsl:when>
-                            <xsl:when test="($type = 'nmo:Mint' or $type = 'foaf:Person') and (index-of($fon, 'http://nomisma.org/id/modern_german_numismatics') or index-of($fon, 'http://nomisma.org/id/medieval_european_numismatics'))">
+                            <xsl:when test="($type = 'nmo:Mint' or $type = 'foaf:Person' or $type = 'nmo:Denomination') and (index-of($fon, 'http://nomisma.org/id/modern_german_numismatics') or index-of($fon, 'http://nomisma.org/id/medieval_european_numismatics'))">
                                 <!-- assign Medieval, Modern German, and Merovingian mint or person IDs to Karsten -->
                                 <xsl:if test="not(index-of($fon, 'http://nomisma.org/id/roman_numismatics'))">
                                     <!--ignore any IDs already in Roman numismatics -->
