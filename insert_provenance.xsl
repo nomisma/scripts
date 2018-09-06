@@ -20,7 +20,8 @@
 
     <!-- Atom feed of spreadsheet -->
     <xsl:variable name="spreadsheets" as="document-node()">
-        <xsl:copy-of select="document('https://spreadsheets.google.com/feeds/list/1ke1Vi8sy9j_D7mnAUA0jgE1po3__RUCQuD2cTW7U8ZQ/od6/public/full')"/>
+        <xsl:copy-of select="document('spreadsheets.xml')"/>
+        <!--<xsl:copy-of select="document('https://spreadsheets.google.com/feeds/list/1ke1Vi8sy9j_D7mnAUA0jgE1po3__RUCQuD2cTW7U8ZQ/od6/public/full')"/>-->
     </xsl:variable>
 
     <!-- create a sequence of commit dates from the spreadsheet -->
@@ -92,7 +93,8 @@
                                     <!-- added prov namespace into RDF files -->
                                     <!-- note: Islamic mints also added on 2015-07-28 -->
                                 </xsl:when>
-                                <xsl:when test="@desc = 'fixed date glitch' or @desc = 'added skos:Concept into dynasty ids' or @desc = 'added FoN islamic_numismatics' or @desc = 'fixed structure'">
+                                <xsl:when
+                                    test="@desc = 'fixed date glitch' or @desc = 'added skos:Concept into dynasty ids' or @desc = 'added FoN islamic_numismatics' or @desc = 'fixed structure'">
                                     <!-- note: minor fixes after creation of Islamic orgs and dynasties -->
                                 </xsl:when>
                                 <xsl:when test="contains(., '2016-04-13')">
@@ -121,7 +123,7 @@
 
                 <xsl:choose>
                     <xsl:when test="index-of($dates, $creation) &gt; 0">
-                        
+
                         <!-- call a manual modification event for certain combinations of type and date -->
                         <xsl:choose>
                             <xsl:when test="$creation = '2015-07-31' and not($type = 'foaf:Person')">
@@ -219,7 +221,7 @@
 
     <xsl:template match="date" mode="manual">
         <xsl:param name="mode"/>
-        
+
         <xsl:variable name="date" select="substring-before(., 'T')"/>
 
         <xsl:choose>
@@ -230,7 +232,7 @@
                         <prov:atTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
                             <xsl:value-of select="."/>
                         </prov:atTime>
-                        
+
                         <!-- attempt to evaluate the prov:wasAssociatedWith by date, field of numismatics, or other parameters -->
                         <xsl:choose>
                             <xsl:when test="$date = '2012-10-28'">
@@ -240,7 +242,8 @@
                                     <xsl:text>This is among the original Nomisma XHTML+RDFa fragments, most likely created between 2010-2012 by Sebastian Heath and/or Andy Meadows.</xsl:text>
                                 </dcterms:description>
                             </xsl:when>
-                            <xsl:when test="($type = 'nmo:Mint' or $type = 'foaf:Person' or $type = 'nmo:Denomination') and (index-of($fon, 'http://nomisma.org/id/modern_german_numismatics') or index-of($fon, 'http://nomisma.org/id/medieval_european_numismatics'))">
+                            <xsl:when
+                                test="($type = 'nmo:Mint' or $type = 'foaf:Person' or $type = 'nmo:Denomination') and (index-of($fon, 'http://nomisma.org/id/modern_german_numismatics') or index-of($fon, 'http://nomisma.org/id/medieval_european_numismatics'))">
                                 <!-- assign Medieval, Modern German, and Merovingian mint or person IDs to Karsten -->
                                 <xsl:if test="not(index-of($fon, 'http://nomisma.org/id/roman_numismatics'))">
                                     <!--ignore any IDs already in Roman numismatics -->
@@ -252,7 +255,7 @@
                                 <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/dmathie"/>
                             </xsl:when>
                             <xsl:when test="contains($id, '_pir')">
-                                <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/upeter"/>
+                                <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/kdahmen"/>
                             </xsl:when>
                         </xsl:choose>
                         <dcterms:type>manual</dcterms:type>
@@ -268,8 +271,8 @@
                             <prov:atTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
                                 <xsl:value-of select="."/>
                             </prov:atTime>
-                            
-                            <!-- agents of manual modification are nearly impossible to ascertain -->                            
+
+                            <!-- agents of manual modification are nearly impossible to ascertain -->
                             <dcterms:type>manual</dcterms:type>
                         </prov:Activity>
                     </prov:activity>
@@ -281,60 +284,65 @@
     <xsl:template match="date" mode="spreadsheet">
         <xsl:param name="mode"/>
         <xsl:param name="creation"/>
-        
+
         <xsl:variable name="date" select="substring-before(., 'T')"/>
-        
+
         <!-- ignore certain dates when the ID doesn't match a specific parameter -->
-        <xsl:choose>           
+        <xsl:choose>
             <xsl:when test="($date = $creation) and $mode = 'Modify'">
                 <!-- ignore events that are already determined to be creation dates -->
             </xsl:when>
             <xsl:otherwise>
-                    <!-- differentiate between new or modified activities -->
-                    <xsl:choose>
-                        <xsl:when test="$mode = 'Modify'">
-                            <prov:activity>
-                                <xsl:call-template name="activity">
-                                    <xsl:with-param name="mode" select="$mode"/>
-                                </xsl:call-template>
-                            </prov:activity>
-                        </xsl:when>
-                        <xsl:when test="$mode = 'Create'">
-                            <prov:wasGeneratedBy>
-                                <xsl:call-template name="activity">
-                                    <xsl:with-param name="mode" select="$mode"/>
-                                </xsl:call-template>
-                            </prov:wasGeneratedBy>
-                        </xsl:when>
-                    </xsl:choose>
+                <!-- differentiate between new or modified activities -->
+                <xsl:choose>
+                    <xsl:when test="$mode = 'Modify'">
+                        <prov:activity>
+                            <xsl:call-template name="activity">
+                                <xsl:with-param name="mode" select="$mode"/>
+                            </xsl:call-template>
+                        </prov:activity>
+                    </xsl:when>
+                    <xsl:when test="$mode = 'Create'">
+                        <prov:wasGeneratedBy>
+                            <xsl:call-template name="activity">
+                                <xsl:with-param name="mode" select="$mode"/>
+                            </xsl:call-template>
+                        </prov:wasGeneratedBy>
+                    </xsl:when>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
+
     <xsl:template name="activity">
         <xsl:param name="mode"/>
-        
+
         <xsl:variable name="date" select="substring-before(., 'T')"/>
         <xsl:variable name="creator" select="$spreadsheets//atom:entry[gsx:commitdate = $date][1]/gsx:creator"/>
-            
-        
-        
+
         <prov:Activity>
             <rdf:type rdf:resource="http://www.w3.org/ns/prov#{$mode}"/>
             <prov:atTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
                 <xsl:value-of select="."/>
             </prov:atTime>
-            
+
             <!-- evaluate spreadsheets to determine the uploader -->
             <xsl:call-template name="uploader">
                 <xsl:with-param name="creator" select="$creator"/>
             </xsl:call-template>
-            
+
             <!-- evaluate spreadsheet URL based on commit date -->
             <xsl:call-template name="generate-spreadsheet">
                 <xsl:with-param name="date" select="$date"/>
             </xsl:call-template>
             <dcterms:type>spreadsheet</dcterms:type>
+
+            <!-- insert a note that all spreadsheets uploaded before or on 2015-06-12 (Non-Islamic corporate entities and dynasties) were converted to IDs through manual one-off scripts -->
+            <xsl:if test="xs:date($date) &lt;= xs:date('2015-06-12')">
+                <dcterms:description xml:lang="en">
+                    <xsl:text>This ID was generated by processing a spreadsheet through a one-off PHP script, predating the Nomisma spreadsheet import feature.</xsl:text>
+                </dcterms:description>
+            </xsl:if>
         </prov:Activity>
     </xsl:template>
 
@@ -382,18 +390,18 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        
+
         <prov:used rdf:resource="{concat('https://docs.google.com/spreadsheets/d/', $key, '/pubhtml')}"/>
     </xsl:template>
-    
+
     <xsl:template name="uploader">
         <xsl:param name="creator"/>
-        
+
         <xsl:choose>
             <xsl:when test="$creator = 'http://nomisma.org/editor/upeter'">
                 <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/upeter"/>
             </xsl:when>
-            <xsl:when test="$creator = 'http://nomisma.org/editor/ameadows'">
+            <xsl:when test="$creator = 'http://nomisma.org/editor/ameadows' or $creator = 'http://nomisma.org/editor/kdahmen'">
                 <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/ameadows"/>
             </xsl:when>
             <xsl:otherwise>
@@ -411,7 +419,7 @@
             <skos:changeNote rdf:resource="{concat($uri, '#provenance')}"/>
         </xsl:element>
     </xsl:template>
-    
+
     <!-- canonical Wikidata URI is http, not https -->
     <xsl:template match="skos:exactMatch[contains(@rdf:resource, 'wikidata.org')]">
         <skos:exactMatch rdf:resource="{replace(@rdf:resource, 'https', 'http')}"/>
