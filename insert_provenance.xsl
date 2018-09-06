@@ -5,7 +5,7 @@
     xmlns:nmo="http://nomisma.org/ontology#" xmlns:osgeo="http://data.ordnancesurvey.co.uk/ontology/geometry/" xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:un="http://www.owl-ontologies.com/Ontology1181490123.owl#" xmlns:nm="http://nomisma.org/id/" xmlns:prov="http://www.w3.org/ns/prov#"
     xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:rdac="http://www.rdaregistry.info/Elements/c/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="#all" version="2.0">
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:crm="http://www.cidoc-crm.org/cidoc-crm/" exclude-result-prefixes="#all" version="2.0">
 
     <xsl:strip-space elements="*"/>
     <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
@@ -264,7 +264,7 @@
             </xsl:when>
             <xsl:when test="$mode = 'Modify'">
                 <!-- insert an event if the date isn't in a spreadsheet -->
-                <xsl:if test="not(index-of($dates, $date))">
+                <xsl:if test="count(index-of($dates, $date)) = 0">
                     <prov:activity>
                         <prov:Activity>
                             <rdf:type rdf:resource="http://www.w3.org/ns/prov#{$mode}"/>
