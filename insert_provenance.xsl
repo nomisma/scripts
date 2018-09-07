@@ -108,11 +108,17 @@
                                     <!-- 2016-06-13-->
                                     <!-- replaced http with https in wikidata URIs -->
                                 </xsl:when>
+                                <xsl:when test="@desc = 'purged false wikidata entities (-1)'">
+                                    <!-- 2017-10-18 -->
+                                </xsl:when>
                                 <xsl:when test="@desc = 'changed the class of Epirote and Achaean Leagues'">
                                     <!-- 2018-04-11 -->
                                 </xsl:when>
                                 <xsl:when test="contains(., '2018-08-28')">
                                     <!-- updated permissions -->
+                                </xsl:when>
+                                <xsl:when test="@desc = 'stripped out empty namespace'">
+                                    <!-- 2018-09-05 -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:copy-of select="self::node()"/>
