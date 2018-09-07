@@ -80,13 +80,16 @@
 
                             <!-- ignore specific changes -->
                             <xsl:choose>
-                                <xsl:when test="contains(., '2015-02-12')">
+                                <xsl:when test="@desc = 'replaced xsd:float with xsd:decimal'">
+                                    <!-- 2015-02-12 -->
                                     <!-- replaced xsd:float with xsd:decimal -->
                                 </xsl:when>
-                                <xsl:when test="contains(., '2015-03-06')">
+                                <xsl:when test="@desc = 'added skos:Concept type into a few foaf:Person records that slipped through the cracks'">
+                                    <!-- 2015-03-06 -->
                                     <!-- added skos:Concept type into a few foaf:Person records that slipped through the cracks-->
                                 </xsl:when>
-                                <xsl:when test="contains(., '2015-07-16')">
+                                <xsl:when test="@desc = 'replaced relatedMatch and exactMatch with closeMatch in mints'">
+                                    <!-- 2015-07-16 -->
                                     <!-- replaced relatedMatch and exactMatch with closeMatch in mints -->
                                 </xsl:when>
                                 <xsl:when test="@desc = 'added prov namespace into RDF files'">
@@ -97,10 +100,12 @@
                                     test="@desc = 'fixed date glitch' or @desc = 'added skos:Concept into dynasty ids' or @desc = 'added FoN islamic_numismatics' or @desc = 'fixed structure'">
                                     <!-- note: minor fixes after creation of Islamic orgs and dynasties -->
                                 </xsl:when>
-                                <xsl:when test="contains(., '2016-04-13')">
+                                <xsl:when test="@desc = 'migrated CIDOC-CRM to canonical URI from Erlangen'">
+                                    <!-- 2016-04-13 -->
                                     <!-- migrated CIDOC-CRM to canonical URI from Erlangen -->
                                 </xsl:when>
-                                <xsl:when test="contains(., '2016-06-13')">
+                                <xsl:when test="@desc = 'replaced http with https in wikidata URIs'">
+                                    <!-- 2016-06-13-->
                                     <!-- replaced http with https in wikidata URIs -->
                                 </xsl:when>
                                 <xsl:when test="@desc = 'changed the class of Epirote and Achaean Leagues'">
