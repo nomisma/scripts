@@ -259,6 +259,7 @@
                                 <xsl:if test="not(index-of($fon, 'http://nomisma.org/id/roman_numismatics'))">
                                     <!--ignore any IDs already in Roman numismatics -->
                                     <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/kdahmen"/>
+                                    <prov:wasAssociatedWith rdf:resource="http://nomisma.org/editor/wbloom"/>
                                 </xsl:if>
                             </xsl:when>
                             <xsl:when test="$type = 'foaf:Person' and index-of($fon, 'http://nomisma.org/id/byzantine_numismatics')">
