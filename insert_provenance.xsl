@@ -432,8 +432,46 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- canonical Wikidata URI is http, not https -->
-    <xsl:template match="skos:exactMatch[contains(@rdf:resource, 'wikidata.org')]">
-        <skos:exactMatch rdf:resource="{replace(@rdf:resource, 'https', 'http')}"/>
+    <!-- reprocess matches: mints link to skos:closeMatch. All else link to skos:exactMatch. Canonical URIs for Wikidata are http:, Pleiades are https: -->
+    <xsl:template match="skos:closeMatch|skos:relatedMatch|skos:exactMatch">
+        
+        <!-- only process if the URI isn't already in -->
+        <xsl:variable name="uri" select="@rdf:resource"/>
+        
+        <xsl:if test="not(preceding-sibling::*[ends-with(local-name(), 'Match')]/@rdf:resource = $uri)">
+            <xsl:choose>
+                <xsl:when test="$type = 'nmo:Mint'">
+                    <skos:closeMatch>
+                        <xsl:call-template name="process-uri">
+                            <xsl:with-param name="uri" select="$uri"/>
+                        </xsl:call-template>
+                    </skos:closeMatch>                
+                </xsl:when>
+                <xsl:otherwise>
+                    <skos:exactMatch>
+                        <xsl:call-template name="process-uri">
+                            <xsl:with-param name="uri" select="$uri"/>
+                        </xsl:call-template>
+                    </skos:exactMatch>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
     </xsl:template>
+    
+    <xsl:template name="process-uri">
+        <xsl:param name="uri"/>
+        
+        <xsl:choose>
+            <xsl:when test="contains($uri, 'wikidata.org')">
+                <xsl:attribute name="rdf:resource" select="replace($uri, 'https', 'http')"/>
+            </xsl:when>
+            <xsl:when test="contains($uri, 'pleiades.stoa.org')">
+                <xsl:attribute name="rdf:resource" select="replace($uri, 'http', 'https')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="rdf:resource" select="$uri"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
 </xsl:stylesheet>
