@@ -98,7 +98,10 @@
                                 </xsl:when>
                                 <xsl:when
                                     test="@desc = 'fixed date glitch' or @desc = 'added skos:Concept into dynasty ids' or @desc = 'added FoN islamic_numismatics' or @desc = 'fixed structure'">
-                                    <!-- note: minor fixes after creation of Islamic orgs and dynasties -->
+                                    <!-- note: minor fixes after creation of Islamic orgs and dynasties: applies to all but one ID -->                                    
+                                    <xsl:if test="$id = 'oman_med_governors'">
+                                        <xsl:copy-of select="self::node()"/>
+                                    </xsl:if>
                                 </xsl:when>
                                 <xsl:when test="@desc = 'migrated CIDOC-CRM to canonical URI from Erlangen'">
                                     <!-- 2016-04-13 -->
